@@ -1,4 +1,4 @@
-# WDB Full-Stack Next.js Template
+# Full-Stack Next.js Template
 
 Please read the entirety of this README before starting development. There's a lot of useful information here!
 
