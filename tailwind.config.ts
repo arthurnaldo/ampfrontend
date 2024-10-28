@@ -10,7 +10,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        wdbBlue: "#0d6efd",
+        accentPrimary: "#012776",
+        accentSecondary: "#FDB414",
       },
     },
   },
