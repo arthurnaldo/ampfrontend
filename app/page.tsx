@@ -1,6 +1,8 @@
 import NavBar from "../components/NavBar";
 import Hero from "@/components/Hero";
 import ToolkitLink from "@/components/ToolkitLink";
+// import Footer from "../components/Footer";
+import ChatbotPage from "@/components/chatbot";
 
 const toolkitLinks = [
   {
@@ -43,6 +45,8 @@ export default function Home() {
           ))}
         </div>
       </div>
+      <ChatbotPage></ChatbotPage>
+      {/* <Footer /> */}
     </section>
   );
 }
