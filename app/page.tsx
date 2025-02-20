@@ -1,4 +1,3 @@
-import NavBar from "../components/NavBar";
 import Hero from "@/components/Hero";
 import ToolkitLink from "@/components/ToolkitLink";
 import Footer from "../components/Footer";
@@ -40,7 +39,6 @@ const toolkitLinks = [
 export default function Home() {
   return (
     <section>
-      <NavBar />
       <Hero />
       <div className="p-12">
         <h1 className="mb-2 text-4xl font-bold text-blue-800">
