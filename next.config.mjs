@@ -5,7 +5,7 @@ const nextConfig = {
    domains: ['encrypted-tbn0.gstatic.com'], // Add your allowed image domains here
  },
  output: 'export', // Enable static export
- basePath: '/your-repo-name', // Set this to your GitHub repo name
+ basePath: '/ampfrontend', // Set this to your GitHub repo name
 };
 
 export default nextConfig;
