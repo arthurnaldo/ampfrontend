@@ -30,18 +30,12 @@ export default function NavBar() {
           </div>
           <div className="flex h-full items-center gap-4">
             <Link href="/">
-              <NavBarLink selected={pathname === "/"} text="Products" />
-            </Link>
-            <Link href="/solutions">
-              <NavBarLink
-                selected={pathname === "/solutions"}
-                text="Solutions"
-              />
+              <NavBarLink selected={pathname === "/"} text="Home" />
             </Link>
             <Link href="/community">
               <NavBarLink
                 selected={pathname === "/community"}
-                text="Community"
+                text="Leadership"
               />
             </Link>
             <Link href="/resources">

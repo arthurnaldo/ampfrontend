@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function Hero() {
   return (
     <header>
@@ -22,12 +24,18 @@ export default function Hero() {
                 <p className="mx-auto mb-10 max-w-3xl text-lg text-gray-300">
                   Empowered by AI Chatbot
                 </p>
-                <a
-                  className="mb-4 inline-block w-full rounded-lg border-2 border-transparent bg-gray-200 px-4 py-2 text-sm font-bold uppercase text-gray-800 transition duration-200 hover:bg-gray-100 md:mr-6 md:w-auto"
-                  href="#"
-                >
-                  Get Started
-                </a>
+                <div className="mb-4 flex justify-center gap-4">
+                  <Link href="/resources">
+                    <button className="inline-block rounded-lg border-2 border-transparent bg-gray-200 px-4 py-2 text-sm font-bold uppercase text-gray-800 transition duration-200 hover:bg-gray-100">
+                      Resources
+                    </button>
+                  </Link>
+                  <Link href="https://drive.google.com/drive/folders/1CbtIwLPqFw6TG2nQ2t1Cc-tpd0qgpqlv">
+                    <button className="inline-block rounded-lg border-2 border-transparent bg-gray-200 px-4 py-2 text-sm font-bold uppercase text-gray-800 transition duration-200 hover:bg-gray-100">
+                      Orientation to the Toolkit
+                    </button>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

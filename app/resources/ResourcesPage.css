@@ -24,14 +24,18 @@
 }
 
 .resource-item {
-  background-color: #f0f0f0; /* Light background for items */
+  background-color: #ffffff; /* White background for items */
   padding: 15px; /* Padding for items */
   border-radius: 5px; /* Rounded corners */
   text-decoration: none; /* Remove underline from links */
   color: #333; /* Dark text color */
-  transition: background-color 0.3s; /* Smooth background transition */
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s; /* Smooth background transition */
+  border: 2px solid #000000; /* Outline color */
 }
 
 .resource-item:hover {
   background-color: #e0e0e0; /* Darker background on hover */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
 }
