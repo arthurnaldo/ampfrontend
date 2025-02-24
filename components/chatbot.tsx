@@ -39,6 +39,10 @@ const MessageComponent: React.FC<MessageProps> = ({ message }) => {
   );
 };
 
+interface Questions {
+  [key: string]: string[]; // This allows any string as a key with an array of strings as the value
+}
+
 const Chatbot: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     { type: "bot", content: "Welcome! How can I assist you today?" },
@@ -46,7 +50,7 @@ const Chatbot: React.FC = () => {
   const [input, setInput] = useState<string>("");
   const [topic, setTopic] = useState<string>("");
 
-  const questions = {
+  const questions: Questions = {
     "Business and Finance": [
       "What is Berkeley's Chart of Accounts?",
       "How does the purchasing process work?",
@@ -75,7 +79,7 @@ const Chatbot: React.FC = () => {
       if (userMessageContent.toLowerCase().includes("chart of accounts")) {
         botResponse = (
           <>
-            Berkeley’s Chart of Accounts (CoA) is called a &quot;chart
+            Berkeleys Chart of Accounts (CoA) is called a &quot;chart
             string.&quot; Learn more here:{" "}
             <a
               href="https://controller.berkeley.edu/accounting-controls/chart-accounts"
@@ -237,15 +241,17 @@ const Chatbot: React.FC = () => {
       <div className="flex w-1/4 flex-col rounded-lg bg-white p-4 shadow-lg">
         <h2 className="mb-4 text-xl font-bold text-gray-800">FAQ</h2>
         <ul className="space-y-2">
-          {(questions[topic] || []).map((question, index) => (
-            <li
-              key={index}
-              className="cursor-pointer rounded-lg bg-gray-200 p-3 hover:bg-gray-300"
-              onClick={() => handleSendMessage(question)}
-            >
-              {question}
-            </li>
-          ))}
+          {(topic in questions ? questions[topic] : []).map(
+            (question, index) => (
+              <li
+                key={index}
+                className="cursor-pointer rounded-lg bg-gray-200 p-3 hover:bg-gray-300"
+                onClick={() => handleSendMessage(question)}
+              >
+                {question}
+              </li>
+            ),
+          )}
         </ul>
       </div>
     </div>
