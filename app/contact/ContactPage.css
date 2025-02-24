@@ -1,0 +1,37 @@
+.contact-container {
+  max-width: 800px; /* Limit the width for better readability */
+  margin: 0 auto; /* Center the container */
+  padding: 40px; /* Increased padding for a more spacious feel */
+  background-color: #ffffff; /* White background for contrast */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.contact-title {
+  font-size: 2.5rem; /* Larger font size for the title */
+  margin-bottom: 20px; /* Space below the title */
+  color: #333; /* Darker text color */
+  text-align: center; /* Center the title */
+  font-weight: bold; /* Make the title bold */
+}
+
+.contact-description {
+  font-size: 1.2rem; /* Slightly larger font for description */
+  margin-bottom: 20px; /* Space below the description */
+  color: #555; /* Medium gray text color */
+  text-align: center; /* Center the description */
+}
+
+.contact-email {
+  font-size: 1.2rem; /* Standard font size for email */
+  color: #0070f3; /* Link color */
+  text-align: center; /* Center the email */
+}
+
+.contact-email a {
+  text-decoration: none; /* Remove underline from link */
+}
+
+.contact-email a:hover {
+  text-decoration: underline; /* Underline on hover for better UX */
+}
