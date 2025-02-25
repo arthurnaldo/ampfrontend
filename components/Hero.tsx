@@ -8,7 +8,7 @@ export default function Hero() {
       <div
         className="w-full bg-cover bg-center"
         style={{
-          backgroundImage: "url('/assets/bg.jpg')",
+          backgroundImage: "url('./assets/bg.jpg')",
         }}
       >
         <div className="flex h-full w-full items-center justify-center bg-gray-900 bg-opacity-50 py-12">

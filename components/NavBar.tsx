@@ -20,7 +20,7 @@ export default function NavBar() {
               }}
             >
               <Image
-                src="/assets/Berkeley AMP Color.png"
+                src="./assets/Berkeley AMP Color.png"
                 alt="Berkeley AMP Logo"
                 width={200}
                 height={200}
