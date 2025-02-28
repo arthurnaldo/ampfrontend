@@ -48,6 +48,7 @@ const Chatbot: React.FC = () => {
     { type: "bot", content: "Welcome! How can I assist you today?" },
   ]);
   const [input, setInput] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const [topic, setTopic] = useState<string>("");
 
   const questions: Questions = {
@@ -65,7 +66,7 @@ const Chatbot: React.FC = () => {
     ],
   };
 
-  const handleSendMessage = (question?: string) => {
+  const handleSendMessage = async (question?: string) => {
     const userMessageContent = question || input.trim();
     if (userMessageContent) {
       const userMessage: Message = {
@@ -73,117 +74,41 @@ const Chatbot: React.FC = () => {
         content: userMessageContent,
       };
       setMessages((prevMessages) => [...prevMessages, userMessage]);
+      setLoading(true);
 
-      let botResponse: string | JSX.Element =
-        "I'm not sure about that. Could you ask something else?";
-      if (userMessageContent.toLowerCase().includes("chart of accounts")) {
-        botResponse = (
-          <>
-            Berkeleys Chart of Accounts (CoA) is called a &quot;chart
-            string.&quot; Learn more here:{" "}
-            <a
-              href="https://controller.berkeley.edu/accounting-controls/chart-accounts"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 underline hover:text-blue-700"
-            >
-              Chart of Accounts
-            </a>
-            .
-          </>
-        );
-        setTopic("Business and Finance");
-      } else if (userMessageContent.toLowerCase().includes("faculty hiring")) {
-        botResponse = (
-          <>
-            Faculty hiring at Berkeley involves using APRecruit with approvals
-            from OFEW and APO. Learn more:{" "}
-            <a
-              href="https://aprecruit.berkeley.edu/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 underline hover:text-blue-700"
-            >
-              APRecruit
-            </a>
-            .
-          </>
-        );
-        setTopic("Academic and Faculty Affairs");
-      } else if (
-        userMessageContent.toLowerCase().includes("fiscal year deadlines")
-      ) {
-        botResponse = (
-          <>
-            Key finance deadlines include July 1 (start of fiscal year) and
-            June-mid-July (close of prior fiscal year books). Learn more:{" "}
-            <a
-              href="https://cfo.berkeley.edu/divisional-finance-leaders/vc-finance-operational-deadlines"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 underline hover:text-blue-700"
-            >
-              Finance Deadlines
-            </a>
-            .
-          </>
-        );
-        setTopic("Business and Finance");
-      } else if (userMessageContent.toLowerCase().includes("blucards")) {
-        botResponse = (
-          <>
-            BluCards are Berkeley&apos;s procurement cards for purchases. Learn
-            more:{" "}
-            <a
-              href="https://controller.berkeley.edu/financial-operations/card-program-overview"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 underline hover:text-blue-700"
-            >
-              BluCard Overview
-            </a>
-            .
-          </>
-        );
-        setTopic("Business and Finance");
-      } else if (userMessageContent.toLowerCase().includes("apbears")) {
-        botResponse = (
-          <>
-            APBears is a web application at Berkeley for tracking faculty
-            achievements and streamlining review processes. Details:{" "}
-            <a
-              href="https://apapps.berkeley.edu/home"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 underline hover:text-blue-700"
-            >
-              APBears
-            </a>
-            .
-          </>
-        );
-        setTopic("Academic and Faculty Affairs");
-      } else if (
-        userMessageContent.toLowerCase().includes("purchasing process")
-      ) {
-        botResponse =
-          "At Berkeley, the purchasing process involves using BearBuy, the university's procurement system. Purchases can be made from pre-approved catalogs or as custom orders. For purchases above $10,000, additional approvals and documentation are required.";
-        setTopic("Business and Finance");
-      } else if (
-        userMessageContent.toLowerCase().includes("academic recruitment")
-      ) {
-        botResponse =
-          "Guides for academic recruitment are detailed resources that provide step-by-step processes for faculty hiring, including search committee guidelines, diversity requirements, and reporting standards. These ensure equity and compliance throughout the hiring process.";
-        setTopic("Academic and Faculty Affairs");
-      } else if (userMessageContent.toLowerCase().includes("role")) {
-        botResponse =
-          "The Academic Personnel Office (APO) at Berkeley oversees policies related to academic employment. It supports faculty, academic appointees, and administrative units by ensuring compliance with employment policies and fostering a productive academic environment.";
-        setTopic("Academic and Faculty Affairs");
+      try {
+        // Make an API call to your backend
+        const response = await fetch("http://127.0.0.1:5000/query", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ query: userMessageContent }),
+        });
+
+        console.log(response);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        // Access the result from the response
+        const botResponse: string | JSX.Element = data.response.result;
+
+        const botMessage: Message = { type: "bot", content: botResponse };
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
+        setInput("");
+      } catch (error) {
+        console.error("Error fetching response:", error);
+        const errorMessage: Message = {
+          type: "bot",
+          content: "Sorry, I couldn't get a response from the server.",
+        };
+        setMessages((prevMessages) => [...prevMessages, errorMessage]);
+        setInput("");
+      } finally {
+        setLoading(false);
       }
-
-      const botMessage: Message = { type: "bot", content: botResponse };
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
-      setInput("");
     }
   };
 
@@ -228,12 +153,14 @@ const Chatbot: React.FC = () => {
             onChange={handleInputChange}
             placeholder="Type your message..."
             className="flex-1 rounded-lg border px-4 py-2 focus:outline-none focus:ring focus:ring-blue-300"
+            disabled={loading}
           />
           <button
             onClick={() => handleSendMessage()}
             className="rounded-lg bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+            disabled={loading}
           >
-            Send
+            {loading ? "Sending..." : "Send"}
           </button>
         </div>
       </div>
