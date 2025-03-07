@@ -1,19 +1,16 @@
 "use client";
 
 const footerLinks = {
-  useCases: [
-    { label: "UI design", path: "/ui-design" },
-    { label: "UX design", path: "/ux-design" },
-    { label: "Wireframing", path: "/wireframing" },
+  chat: [
+    { label: "Chat", path: "/chat" },
+    { label: "Forum", path: "/forum" },
+    { label: "Contribute", path: "/drive" },
   ],
-  explore: [
-    { label: "Design", path: "/design" },
-    { label: "Prototyping", path: "/prototyping" },
+  connect: [
+    { label: "Leadership", path: "/community" },
+    { label: "Contact", path: "/prototyping" },
   ],
-  resources: [
-    { label: "Blog", path: "/blog" },
-    { label: "Best practices", path: "/best-practices" },
-  ],
+  resources: [{ label: "Folders", path: "/resources" }],
 };
 
 export default function Footer() {
@@ -23,7 +20,7 @@ export default function Footer() {
         <div>
           <h5 className="font-bold">Use cases</h5>
           <ul>
-            {footerLinks.useCases.map((link, index) => (
+            {footerLinks.chat.map((link, index) => (
               <li key={index}>
                 <a href={link.path}>{link.label}</a>
               </li>
@@ -33,7 +30,7 @@ export default function Footer() {
         <div>
           <h5 className="font-bold">Explore</h5>
           <ul>
-            {footerLinks.explore.map((link, index) => (
+            {footerLinks.connect.map((link, index) => (
               <li key={index}>
                 <a href={link.path}>{link.label}</a>
               </li>

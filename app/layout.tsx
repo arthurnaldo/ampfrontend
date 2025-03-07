@@ -11,8 +11,8 @@ const geistSans = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "WDB Template",
-  description: "A template for WDB projects!",
+  title: "AMP Manager Toolkit",
+  description: "AMP Manager Toolkit",
 };
 
 export default function RootLayout({
@@ -25,8 +25,8 @@ export default function RootLayout({
       <SwitchContextProvider>
         <body className={`${geistSans.variable} antialiased`}>
           <NavBar />
-          {/* Optional: Wrap children with a div to add top padding so content isn't hidden behind the navbar */}
-          <div className="pt-18">{children}</div>
+          {/* Add a wrapper div with consistent top padding for all pages */}
+          <main className="pt-16">{children}</main>
         </body>
       </SwitchContextProvider>
     </html>
