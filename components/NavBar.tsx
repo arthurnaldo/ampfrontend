@@ -72,6 +72,9 @@ export default function NavBar() {
             <Link href="/contact">
               <NavBarLink selected={pathname === "/contact"} text="Contact" />
             </Link>
+            <Link href="/login">
+              <NavBarLink selected={pathname === "/login"} text="Login Test" />
+            </Link>
           </div>
         </div>
       </div>
