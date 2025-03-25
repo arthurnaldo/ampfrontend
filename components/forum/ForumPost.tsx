@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpIcon, ArrowDownIcon, MessageSquareIcon } from "lucide-react";
 
 interface ForumPostProps {
+  id?: string;
   title: string;
   author: string;
   timestamp: string;

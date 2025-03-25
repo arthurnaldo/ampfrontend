@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +10,29 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-export default function CreatePostDialog() {
+export default function CreatePostDialog({ addPost }: { addPost: (post: any) => void }) {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+
+  const handlePost = () => {
+    if (!title.trim() || !content.trim()) return;
+    
+    // Create a new post object
+    const newPost = {
+      title,
+      author: "You", // Replace with actual user data if available
+      timestamp: "Just now",
+      content,
+      upvotes: 0,
+      comments: 0,
+    };
+
+    addPost(newPost); // Call parent function to add the post
+    setTitle(""); 
+    setContent(""); 
+  };
+
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -27,6 +50,8 @@ export default function CreatePostDialog() {
             <Textarea
               placeholder="Share your thoughts..."
               className="min-h-[200px]"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
             />
           </div>
         </div>
