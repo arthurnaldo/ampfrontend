@@ -4,6 +4,7 @@ import "./globals.css";
 import { SwitchContextProvider } from "@/context/SwitchContext";
 import NavBar from "@/components/NavBar"; // Adjust the import path as needed
 import { cn } from "@/lib/utils";
+import { AuthProvider } from "@/components/AuthProvider";
 
 export const metadata: Metadata = {
   title: "AMP Manager Toolkit",
@@ -23,11 +24,13 @@ export default function RootLayout({
           GeistSans.variable,
         )}
       >
-        <SwitchContextProvider>
-          <NavBar />
-          {/* Add a wrapper div with consistent top padding for all pages */}
-          <main className="pt-16">{children}</main>
-        </SwitchContextProvider>
+        <AuthProvider>
+          <SwitchContextProvider>
+            <NavBar />
+            {/* Add a wrapper div with consistent top padding for all pages */}
+            <main className="pt-16">{children}</main>
+          </SwitchContextProvider>
+        </AuthProvider>
       </body>
     </html>
   );
