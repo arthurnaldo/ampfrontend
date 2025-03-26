@@ -85,14 +85,14 @@ const Chatbot: React.FC = () => {
           body: JSON.stringify({ query: userMessageContent }),
         });
 
-        console.log(response);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const data = await response.json();
         // Access the result from the response
-        const botResponse: string | JSX.Element = data.response.result;
+        const botResponse: string = data.response;
+        console.log(botResponse);
 
         const botMessage: Message = { type: "bot", content: botResponse };
         setMessages((prevMessages) => [...prevMessages, botMessage]);
