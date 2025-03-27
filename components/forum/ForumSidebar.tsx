@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
@@ -8,7 +10,7 @@ interface Post {
   id: string;
   title: string;
   author: string;
-  timestamp: string;
+  created_at: string;
   content?: string;
   isActive?: boolean;
 }
@@ -18,14 +20,51 @@ interface ForumSidebarProps {
   selectedPostId?: string;
 }
 
-export default function ForumSidebar({
-  onPostSelect,
-  selectedPostId,
-}: ForumSidebarProps) {
+export default function ForumSidebar({ onPostSelect, selectedPostId}: ForumSidebarProps) {
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("id, title, author, created_at") // Fetch necessary fields
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching posts:", error);
+    } else {
+      // Format the timestamp into a readable format
+      const formattedPosts = data.map((post) => ({
+        id: post.id,
+        title: post.title,
+        author: '4ff3c884-6fd9-4c81-87ba-4b73e57f0264', // Assuming this is a username, otherwise fetch user separately
+        created_at: new Date(post.created_at).toLocaleString(),
+      }));
+
+      setPosts(formattedPosts);
+    }
+  };
+
+  const addPost = async (newPost: Post) => {
+    const { data, error } = await supabase
+      .from("posts")
+      .insert([{ title: newPost.title, content: newPost.content, author: "4ff3c884-6fd9-4c81-87ba-4b73e57f0264" }])
+      .select("*");
+
+    if (error) {
+      console.error("Error adding post:", error);
+    } else if (data) {
+      setPosts([data[0], ...posts]); // Update UI with new post
+    }
+  };
+
   return (
     <div className="flex h-full flex-col gap-4 p-4">
       {/* Create Post Button */}
-      <CreatePostDialog />
+      <CreatePostDialog addPost={addPost}/>
 
       {/* Search Bar */}
       <div className="relative">
@@ -36,7 +75,7 @@ export default function ForumSidebar({
       {/* Posts List */}
       <ScrollArea className="flex-1">
         <div className="space-y-2">
-          {SAMPLE_POSTS.map((post) => (
+          {posts.map((post) => (
             <PostListItem
               key={post.id}
               {...post}
@@ -57,7 +96,7 @@ interface PostListItemProps extends Post {
 function PostListItem({
   title,
   author,
-  timestamp,
+  created_at,
   isActive,
   onClick,
 }: PostListItemProps) {
@@ -70,7 +109,7 @@ function PostListItem({
     >
       <h3 className="line-clamp-2 text-sm font-medium">{title}</h3>
       <p className="mt-1 text-xs text-muted-foreground">
-        {author} • {timestamp}
+        {author} • {created_at}
       </p>
     </Card>
   );

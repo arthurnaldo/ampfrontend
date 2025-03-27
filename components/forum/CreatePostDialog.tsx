@@ -19,15 +19,15 @@ export default function CreatePostDialog({
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const handlePost = () => {
+  const handlePost = async () => {
     if (!title.trim() || !content.trim()) return;
 
     // Create a new post object
     const newPost = {
       id: Math.random().toString(36).substr(2, 9),
       title,
-      author: "You", // Replace with actual user data if available
-      created_at: "Just now",
+      author: "4ff3c884-6fd9-4c81-87ba-4b73e57f0264", // Replace with actual user data if available
+      created_at: new Date().toLocaleString(),
       content,
       upvotes: 0,
       comments: 0,
@@ -49,7 +49,9 @@ export default function CreatePostDialog({
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Input placeholder="Title" />
+            <Input placeholder="Title" 
+                   value={title}
+                   onChange = {(e) => setTitle(e.target.value)}/>
           </div>
           <div className="grid gap-2">
             <Textarea
@@ -62,7 +64,7 @@ export default function CreatePostDialog({
         </div>
         <div className="flex justify-end gap-2">
           <Button variant="outline">Cancel</Button>
-          <Button>Post</Button>
+          <Button onClick={handlePost}>Post</Button>
         </div>
       </DialogContent>
     </Dialog>
