@@ -11,7 +11,7 @@ interface ForumPostProps {
   id?: string;
   title: string;
   author: string;
-  timestamp: string;
+  created_at: string;
   content: string;
   upvotes: number;
   comments: number;
@@ -20,7 +20,7 @@ interface ForumPostProps {
 export default function ForumPost({
   title,
   author,
-  timestamp,
+  created_at,
   content,
   upvotes,
   comments,
@@ -40,7 +40,7 @@ export default function ForumPost({
         <div>
           <h3 className="text-lg font-semibold">{title}</h3>
           <p className="text-sm text-muted-foreground">
-            Posted by {author} • {timestamp}
+            Posted by {author} • {created_at}
           </p>
         </div>
       </CardHeader>

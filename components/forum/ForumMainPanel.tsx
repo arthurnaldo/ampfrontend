@@ -1,40 +1,65 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { MessageSquare, ThumbsUp } from "lucide-react";
 import { Post } from "@/types/forum";
+import { timeStamp } from "console";
 
 export default function ForumMainPanel() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  function generateId(): string {
-    return Math.random().toString(36).substr(2, 9);
-  }
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
-  const addPost = (newPost: Post) => {
-    setPosts((prevPosts) => [...prevPosts, newPost]);
+  // Fetch posts from Supabase
+  const fetchPosts = async () => {
+    const { data, error } = await supabase.from("posts").select("*").order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching posts:", error);
+    } else {
+      setPosts(data);
+    }
   };
 
-  const handlePost = () => {
+  // Add a post and refresh the UI
+  const handlePost = async () => {
+    console.log("Got here after clikcing button");
     if (!title.trim() || !content.trim()) return;
 
-    const newPost: Post = {
-      id: generateId(),
+    // const { data: user, error: userError } = await supabase.auth.getUser();
+
+    // if (userError || !user?.user) {
+    //   console.error("User not authenticated:", userError);
+    //   return;
+    // }
+    
+    //This is to basically insert a new post
+    const newPost = {
       title,
-      author: "You",
-      timestamp: "Just now",
       content,
+      author: '4ff3c884-6fd9-4c81-87ba-4b73e57f0264',
       upvotes: 0,
-      comments: 0,
+      created_at: new Date().toISOString(),
     };
 
-    addPost(newPost);
-    setTitle("");
-    setContent("");
+    //This is the actual insertion
+    const { data, error } = await supabase.from("posts").insert([newPost]).select("*");
+
+    if (error) {
+      console.error("Error saving post:", error);
+    } else {
+      console.log("Correctly saved post");
+      setTitle("");
+      setContent("");
+      setPosts([data[0], ...posts]);
+    }
   };
 
   return (
@@ -42,38 +67,27 @@ export default function ForumMainPanel() {
       {/* Create Post Section */}
       <Card>
         <CardContent>
-          <Textarea
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="mb-2"
-          />
-          <Textarea
-            placeholder="Share your thoughts..."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="mb-2"
-          />
+          <Textarea placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} className="mb-2" />
+          <Textarea placeholder="Share your thoughts..." value={content} onChange={(e) => setContent(e.target.value)} className="mb-2" />
           <Button onClick={handlePost}>Post</Button>
         </CardContent>
       </Card>
-      {/* Post List */}
+
+      {/* If there are no posts to display, we just say 'no posts available' */}
       {posts.length === 0 ? (
         <div className="flex h-full items-center justify-center">
           <p className="text-muted-foreground">No posts available</p>
         </div>
       ) : (
-        posts.map((post, index) => (
-          <Card key={index} className="flex-1">
+        posts.map((post) => (
+          <Card key={post.id} className="flex-1">
             <CardHeader className="flex flex-row items-start gap-4 space-y-0">
               <Avatar>
-                <AvatarFallback>{post.author[0]}</AvatarFallback>
+                <AvatarFallback>{post.title[0]}</AvatarFallback>
               </Avatar>
               <div className="flex-1">
                 <h2 className="text-xl font-bold">{post.title}</h2>
-                <p className="text-sm text-muted-foreground">
-                  Posted by {post.author} • {post.timestamp}
-                </p>
+                <p className="text-sm text-muted-foreground">Posted at {new Date(post.created_at).toLocaleString()}</p>
               </div>
             </CardHeader>
             <CardContent>
@@ -85,7 +99,7 @@ export default function ForumMainPanel() {
                 </Button>
                 <Button variant="outline" size="sm">
                   <MessageSquare className="mr-2 h-4 w-4" />
-                  {post.comments} Comments
+                  0 Comments
                 </Button>
               </div>
             </CardContent>

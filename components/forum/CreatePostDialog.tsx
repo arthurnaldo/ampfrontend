@@ -27,7 +27,7 @@ export default function CreatePostDialog({
       id: Math.random().toString(36).substr(2, 9),
       title,
       author: "You", // Replace with actual user data if available
-      timestamp: "Just now",
+      created_at: "Just now",
       content,
       upvotes: 0,
       comments: 0,
