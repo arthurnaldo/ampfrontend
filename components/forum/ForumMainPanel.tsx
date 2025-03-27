@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { MessageSquare, ThumbsUp } from "lucide-react";
 import { Post } from "@/types/forum";
-import { timeStamp } from "console";
 
 export default function ForumMainPanel() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -19,7 +18,10 @@ export default function ForumMainPanel() {
 
   // Fetch posts from Supabase
   const fetchPosts = async () => {
-    const { data, error } = await supabase.from("posts").select("*").order("created_at", { ascending: false });
+    const { data, error } = await supabase
+      .from("posts")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error("Error fetching posts:", error);
@@ -39,18 +41,21 @@ export default function ForumMainPanel() {
     //   console.error("User not authenticated:", userError);
     //   return;
     // }
-    
+
     //This is to basically insert a new post
     const newPost = {
       title,
       content,
-      author: '4ff3c884-6fd9-4c81-87ba-4b73e57f0264',
+      author: "4ff3c884-6fd9-4c81-87ba-4b73e57f0264",
       upvotes: 0,
       created_at: new Date().toISOString(),
     };
 
     //This is the actual insertion
-    const { data, error } = await supabase.from("posts").insert([newPost]).select("*");
+    const { data, error } = await supabase
+      .from("posts")
+      .insert([newPost])
+      .select("*");
 
     if (error) {
       console.error("Error saving post:", error);
@@ -67,8 +72,18 @@ export default function ForumMainPanel() {
       {/* Create Post Section */}
       <Card>
         <CardContent>
-          <Textarea placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} className="mb-2" />
-          <Textarea placeholder="Share your thoughts..." value={content} onChange={(e) => setContent(e.target.value)} className="mb-2" />
+          <Textarea
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="mb-2"
+          />
+          <Textarea
+            placeholder="Share your thoughts..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="mb-2"
+          />
           <Button onClick={handlePost}>Post</Button>
         </CardContent>
       </Card>
@@ -87,7 +102,9 @@ export default function ForumMainPanel() {
               </Avatar>
               <div className="flex-1">
                 <h2 className="text-xl font-bold">{post.title}</h2>
-                <p className="text-sm text-muted-foreground">Posted at {new Date(post.created_at).toLocaleString()}</p>
+                <p className="text-sm text-muted-foreground">
+                  Posted at {new Date(post.created_at).toLocaleString()}
+                </p>
               </div>
             </CardHeader>
             <CardContent>
@@ -98,8 +115,7 @@ export default function ForumMainPanel() {
                   {post.upvotes} Likes
                 </Button>
                 <Button variant="outline" size="sm">
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  0 Comments
+                  <MessageSquare className="mr-2 h-4 w-4" />0 Comments
                 </Button>
               </div>
             </CardContent>
