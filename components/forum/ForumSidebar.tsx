@@ -90,6 +90,7 @@ export default function ForumSidebar({ onPostSelect, selectedPostId}: ForumSideb
 }
 
 interface PostListItemProps extends Post {
+  //console.log("Post clicked:", title);
   onClick: () => void;
 }
 
@@ -100,12 +101,18 @@ function PostListItem({
   isActive,
   onClick,
 }: PostListItemProps) {
+  
+  const handleClick = () => {
+    console.log("Post clicked:", title); // Debug log
+    onClick();
+  };
+
   return (
     <Card
       className={`cursor-pointer p-3 transition-colors hover:bg-accent ${
         isActive ? "border-primary bg-accent" : ""
       }`}
-      onClick={onClick}
+      onClick={handleClick}
     >
       <h3 className="line-clamp-2 text-sm font-medium">{title}</h3>
       <p className="mt-1 text-xs text-muted-foreground">

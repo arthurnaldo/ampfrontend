@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,10 @@ interface ForumMainPanelProps {
 }
 
 export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
+  useEffect(() => {
+    console.log("Updated selectedPost:", selectedPost);
+  }, [selectedPost]);
+
   if (!selectedPost) {
     return (
       <div className="flex h-full items-center justify-center">
