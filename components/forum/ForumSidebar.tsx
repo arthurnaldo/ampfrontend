@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"; 
 import { supabase } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -20,31 +20,33 @@ interface ForumSidebarProps {
   selectedPostId?: string;
 }
 
-export default function ForumSidebar({ onPostSelect, selectedPostId}: ForumSidebarProps) {
+
+export default function Forum() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   useEffect(() => {
     fetchPosts();
   }, []);
 
   const fetchPosts = async () => {
-    const { data, error } = await supabase
-      .from("posts")
-      .select("id, title, author, created_at") // Fetch necessary fields
-      .order("created_at", { ascending: false });
+    const { data, error } = await supabase.rpc("get_posts");
 
     if (error) {
       console.error("Error fetching posts:", error);
     } else {
+      console.log(data)
       // Format the timestamp into a readable format
       const formattedPosts = data.map((post) => ({
         id: post.id,
         title: post.title,
-        author: '4ff3c884-6fd9-4c81-87ba-4b73e57f0264', // Assuming this is a username, otherwise fetch user separately
+        author: post.author, // Assuming this is a username, otherwise fetch user separately
+        content: post.content,
         created_at: new Date(post.created_at).toLocaleString(),
       }));
+      console.log("Formatted posts:", formattedPosts)
 
-      setPosts(formattedPosts);
+      setPosts(formattedPosts);      
     }
   };
 
@@ -57,87 +59,69 @@ export default function ForumSidebar({ onPostSelect, selectedPostId}: ForumSideb
     if (error) {
       console.error("Error adding post:", error);
     } else if (data) {
-      setPosts([data[0], ...posts]); // Update UI with new post
+      setPosts([data[0], ...posts]);
     }
   };
 
   return (
-    <div className="flex h-full flex-col gap-4 p-4">
-      {/* Create Post Button */}
-      <CreatePostDialog addPost={addPost}/>
+    <div className="flex">
+      {/* Sidebar with post list */}
+      <div className="flex h-full flex-col gap-4 p-4 w-1/3 border-r">
+        <CreatePostDialog addPost={addPost} />
 
-      {/* Search Bar */}
-      <div className="relative">
-        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input className="pl-8" placeholder="Search discussions..." />
+        <div className="relative">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input className="pl-8" placeholder="Search discussions..." />
+        </div>
+
+        <ScrollArea className="flex-1">
+          <div className="space-y-2">
+            {posts.map((post) => (
+              <PostListItem
+                key={post.id}
+                {...post}
+                isActive={post.id === selectedPost?.id}
+                onClick={() => setSelectedPost(post)}
+              />
+            ))}
+          </div>
+        </ScrollArea>
       </div>
 
-      {/* Posts List */}
-      <ScrollArea className="flex-1">
-        <div className="space-y-2">
-          {posts.map((post) => (
-            <PostListItem
-              key={post.id}
-              {...post}
-              isActive={post.id === selectedPostId}
-              onClick={() => onPostSelect(post)}
-            />
-          ))}
-        </div>
-      </ScrollArea>
+      {/* Selected post content */}
+      <div className="flex-1">
+        {selectedPost ? (
+          <div>
+            <h2 className="text-xl font-bold">{selectedPost.title}</h2>
+            <p className="text-gray-600">By {selectedPost.author} - {selectedPost.created_at}</p>
+            <p className="mt-4">{selectedPost.content}</p>
+          </div>
+        ) : ( <p className="text-gray-500">Select a post to view its content</p> )
+        }
+      </div>
     </div>
   );
 }
 
-interface PostListItemProps extends Post {
-  //console.log("Post clicked:", title);
-  onClick: () => void;
-}
-
-function PostListItem({
-  title,
-  author,
-  created_at,
-  isActive,
-  onClick,
-}: PostListItemProps) {
-  
-  const handleClick = () => {
-    console.log("Post clicked:", title); // Debug log
-    onClick();
-  };
-
+function PostListItem({ id, title, author, created_at, isActive, onClick }: 
+        { id: string; title: string; author: string; created_at: string; isActive?: boolean; onClick: () => void }) 
+{
   return (
     <Card
       className={`cursor-pointer p-3 transition-colors hover:bg-accent ${
-        isActive ? "border-primary bg-accent" : ""
-      }`}
-      onClick={handleClick}
+        isActive ? "bg-blue-100" : "hover:bg-gray-100"}}`}
+      onClick={onClick}
     >
       <h3 className="line-clamp-2 text-sm font-medium">{title}</h3>
       <p className="mt-1 text-xs text-muted-foreground">
-        {author} • {created_at}
+        {author} 
+      </p>
+
+      <p className="mt-1 text-xs text-muted-foreground">
+        {created_at}
       </p>
     </Card>
-  );
+  );  
 }
 
-// Sample data
-const SAMPLE_POSTS = [
-  {
-    id: "1",
-    title: "Best practices for managing remote teams?",
-    author: "Emily Best",
-    timestamp: "2h ago",
-    content: "I'm looking for advice on managing remote teams effectively...",
-    isActive: true,
-  },
-  {
-    id: "2",
-    title: "New budget allocation process for FY2024-25",
-    author: "Cruz Grimaldo",
-    timestamp: "5h ago",
-    content: "We're implementing new budget allocation procedures...",
-  },
-  // Add more sample posts...
-];
+ 
