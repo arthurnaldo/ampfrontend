@@ -15,7 +15,7 @@ export default function ForumPage() {
   return (
     <div className="container mx-auto mt-8 flex h-[calc(100vh-8rem)] gap-8">
       {/* Left Sidebar */}
-      <div className="w-1/3">
+      <div className="w-1/3 border-r">
         <ForumSidebar
           onPostSelect={handlePostSelect}
           selectedPostId={selectedPost?.id}
@@ -24,7 +24,7 @@ export default function ForumPage() {
 
       {/* Main Content */}
       <div className="w-2/3">
-        <ForumMainPanel post={selectedPost} />
+        <ForumMainPanel selectedPost={selectedPost} />
       </div>
     </div>
   );
