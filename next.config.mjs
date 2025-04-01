@@ -4,7 +4,7 @@ const nextConfig = {
    unoptimized: true, // Disable image optimization
    domains: ['encrypted-tbn0.gstatic.com'], // Add your allowed image domains here
  },
- output: 'export', // Enable static export
+  output: 'export', // Enable static export
 };
 
-export default nextConfig;
+export default nextConfig
