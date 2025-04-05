@@ -1,9 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, ThumbsUp } from "lucide-react";
+import { MessageSquare, ThumbsUp, Send } from "lucide-react";
 import { Post } from "@/types/forum";
+import CommentButton from "@/components/forum/CommentComponents/CommentButton";
+import CommentBox from "./CommentComponents/CommentBox";
 
 interface ForumMainPanelProps {
   selectedPost: Post | null;
@@ -13,6 +15,17 @@ export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
   useEffect(() => {
     console.log("Updated selectedPost:", selectedPost);
   }, [selectedPost]);
+
+  const [showCommentBox, setShowCommentBox] = useState(false);
+
+  const handleCommentClick = () => {
+    setShowCommentBox(true);
+  };
+
+  const handleSubmitComment = () => {
+    setShowCommentBox(false);
+  };
+
 
   if (!selectedPost) {
     return (
@@ -44,7 +57,18 @@ export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
             <MessageSquare className="mr-2 h-4 w-4" />
             0 Comments
           </Button>
+          
+          <CommentButton onClick={handleCommentClick} />
+
         </div>
+
+        
+        {showCommentBox && (
+          <CommentBox 
+            onSubmitComment={handleSubmitComment} 
+            onCancel={() => setShowCommentBox(false)} 
+          />
+        )}
       </CardContent>
     </Card>
   );
