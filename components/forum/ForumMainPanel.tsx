@@ -6,6 +6,7 @@ import { MessageSquare, ThumbsUp, Send } from "lucide-react";
 import { Post } from "@/types/forum";
 import CommentButton from "@/components/forum/CommentComponents/CommentButton";
 import CommentBox from "./CommentComponents/CommentBox";
+import CommentList from "./CommentComponents/CommentList";
 
 interface ForumMainPanelProps {
   selectedPost: Post | null;
@@ -14,15 +15,18 @@ interface ForumMainPanelProps {
 export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
   useEffect(() => {
     console.log("Updated selectedPost:", selectedPost);
+    console.log("This is a test");
   }, [selectedPost]);
 
   const [showCommentBox, setShowCommentBox] = useState(false);
 
   const handleCommentClick = () => {
+    console.log("Comment button clicked");
     setShowCommentBox(true);
   };
 
-  const handleSubmitComment = () => {
+  const handleSubmitComment = (text: string) => {
+    console.log("Comment submitted: ", text);
     setShowCommentBox(false);
   };
 
@@ -58,7 +62,7 @@ export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
             0 Comments
           </Button>
           
-          <CommentButton onClick={handleCommentClick} />
+          {!showCommentBox && <CommentButton onClick={handleCommentClick} />}
 
         </div>
 
@@ -66,9 +70,12 @@ export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
         {showCommentBox && (
           <CommentBox 
             onSubmitComment={handleSubmitComment} 
-            onCancel={() => setShowCommentBox(false)} 
+            onCancel={() => setShowCommentBox(false)}
+            postId={selectedPost.id}
+            userId={"dffcbd9a-d8d5-4c38-a53c-0b2b0e2f36bd"}
           />
         )}
+        <CommentList postId={selectedPost.id}></CommentList>
       </CardContent>
     </Card>
   );
