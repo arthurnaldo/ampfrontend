@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, ThumbsUp, Send } from "lucide-react";
 import { Post } from "@/types/forum";
+import { supabase } from "@/lib/supabase";
 import CommentButton from "@/components/forum/CommentComponents/CommentButton";
 import CommentBox from "./CommentComponents/CommentBox";
 import CommentList from "./CommentComponents/CommentList";
@@ -13,22 +14,46 @@ interface ForumMainPanelProps {
 }
 
 export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
+  const [showCommentBox, setShowCommentBox] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
+  const [refreshComments, setRefreshComments] = useState(0);
+
   useEffect(() => {
     console.log("Updated selectedPost:", selectedPost);
     console.log("This is a test");
-  }, [selectedPost]);
 
-  const [showCommentBox, setShowCommentBox] = useState(false);
+    if(selectedPost){
+      fetchCommentCount();
+    };
+  }, [selectedPost, refreshComments]);
 
   const handleCommentClick = () => {
     console.log("Comment button clicked");
     setShowCommentBox(true);
   };
 
+  
   const handleSubmitComment = (text: string) => {
     console.log("Comment submitted: ", text);
     setShowCommentBox(false);
+    //When a comment is submitted, this will automatically update the comment count
+    setRefreshComments(prev => prev + 1)
   };
+
+  //I created this to fetch the amount of comments for the selected post
+  const fetchCommentCount = async () => {
+    if(!selectedPost) return;
+
+    try{
+      const {count, error} = await supabase.from("comments").select("*", {count: "exact"}).eq("post_id", selectedPost.id);
+      if(error) throw error;
+      setCommentCount(count || 0);
+    } catch (error) {
+      console.error("Error fetching comment count: ", error);
+    }
+  }
+
+
 
 
   if (!selectedPost) {
@@ -59,7 +84,7 @@ export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
           </Button>
           <Button variant="outline" size="sm">
             <MessageSquare className="mr-2 h-4 w-4" />
-            0 Comments
+            {commentCount} Comments
           </Button>
           
           {!showCommentBox && <CommentButton onClick={handleCommentClick} />}
