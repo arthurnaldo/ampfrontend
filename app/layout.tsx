@@ -4,7 +4,7 @@ import "./globals.css";
 import { SwitchContextProvider } from "@/context/SwitchContext";
 import NavBar from "@/components/NavBar"; // Adjust the import path as needed
 import { cn } from "@/lib/utils";
-import { AuthProvider } from "@/components/AuthProvider";
+import { AuthProvider } from "@/app/context/AuthContext";
 
 export const metadata: Metadata = {
   title: "AMP Manager Toolkit",
