@@ -6,6 +6,7 @@ export async function POST(req: Request) {
     const { email, password, username } = await req.json();
 
     if (!email || !password || !username) {
+      console.error("Signup error: Missing required fields");
       return NextResponse.json(
         { error: "Email, password, and username are required" },
         { status: 400 },
@@ -44,7 +45,8 @@ export async function POST(req: Request) {
       user: authData.user,
       session: authData.session,
     });
-  } catch {
+  } catch (error) {
+    console.error("Signup error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

@@ -6,10 +6,7 @@ export async function POST(req: Request) {
     const { email, password } = await req.json();
 
     if (!email || !password) {
-      return NextResponse.json(
-        { error: "Email and password are required" },
-        { status: 400 },
-      );
+      return NextResponse.json({ status: 400 });
     }
 
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -25,7 +22,8 @@ export async function POST(req: Request) {
       user: data.user,
       session: data.session,
     });
-  } catch {
+  } catch (error) {
+    console.error("Login error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
