@@ -31,7 +31,10 @@ export default function ForumSidebar({
   }, []);
 
   const fetchPosts = async () => {
-    const { data, error } = await supabase.rpc("get_posts");
+    const { data, error } = await supabase
+      .from("posts")
+      .select("id, title, author, content, created_at") // Fetch necessary fields
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error("Error fetching posts:", error);
