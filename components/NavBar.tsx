@@ -60,6 +60,12 @@ export default function NavBar() {
             <Link href="/community">
               <NavBarLink
                 selected={pathname === "/community"}
+                text="Community"
+              />
+            </Link>
+            <Link href="/leadership">
+              <NavBarLink
+                selected={pathname === "/leadership"}
                 text="Leadership"
               />
             </Link>
