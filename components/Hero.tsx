@@ -1,22 +1,29 @@
 "use client";
 
-import Link from "next/link";
+import HeroButton from "./HeroButton";
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function Hero() {
+  const { user } = useAuth();
+
   return (
-    <header>
+    <header className="h-screen">
       <div
-        className="w-full bg-cover bg-center"
+        className="h-full w-full bg-cover bg-center"
         style={{
           backgroundImage: "url('./assets/bg.jpg')",
         }}
       >
-        <div className="flex h-full w-full items-center justify-center bg-gray-900 bg-opacity-50 py-12">
+        <div className="flex h-full w-full items-center justify-center bg-gray-900 bg-opacity-50">
           <div className="text-center">
             <div className="container mx-auto px-4">
               <div className="mx-auto max-w-4xl text-center">
                 <span className="font-semibold uppercase tracking-widest text-gray-200">
-                  New feature
+                  Welcome{" "}
+                  <span className="font-bold text-accentSecondary">
+                    {user ? user.email?.split("@")[0] : "Guest"}
+                  </span>{" "}
+                  to the
                 </span>
                 <h2 className="mb-6 mt-8 text-4xl font-bold text-gray-100 lg:text-5xl">
                   UC Berkeley AMP Manager Toolkit
@@ -25,16 +32,11 @@ export default function Hero() {
                   Empowered by AI Chatbot
                 </p>
                 <div className="mb-4 flex justify-center gap-4">
-                  <Link href="/resources">
-                    <button className="inline-block rounded-lg border-2 border-transparent bg-gray-200 px-4 py-2 text-sm font-bold uppercase text-gray-800 transition duration-200 hover:bg-gray-100">
-                      Resources
-                    </button>
-                  </Link>
-                  <Link href="https://drive.google.com/drive/folders/1CbtIwLPqFw6TG2nQ2t1Cc-tpd0qgpqlv">
-                    <button className="inline-block rounded-lg border-2 border-transparent bg-gray-200 px-4 py-2 text-sm font-bold uppercase text-gray-800 transition duration-200 hover:bg-gray-100">
-                      Orientation to the Toolkit
-                    </button>
-                  </Link>
+                  <HeroButton href="/chat">Chat</HeroButton>
+                  <HeroButton href="https://drive.google.com/drive/folders/1CbtIwLPqFw6TG2nQ2t1Cc-tpd0qgpqlv">
+                    Orientation
+                  </HeroButton>
+                  <HeroButton href="/resources">Resources</HeroButton>
                 </div>
               </div>
             </div>
