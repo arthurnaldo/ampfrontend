@@ -77,13 +77,16 @@ const Chatbot: React.FC = () => {
 
       try {
         // Make an API call to your backend
-        const response = await fetch("http://127.0.0.1:5000/query", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          "http://amp-chatbot-env.eba-xguiwxcb.us-west-2.elasticbeanstalk.com/query",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ query: userMessageContent }),
           },
-          body: JSON.stringify({ query: userMessageContent }),
-        });
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);

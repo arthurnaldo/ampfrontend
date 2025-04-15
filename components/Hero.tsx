@@ -1,8 +1,11 @@
 "use client";
 
 import HeroButton from "./HeroButton";
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function Hero() {
+  const { user } = useAuth();
+
   return (
     <header className="h-screen">
       <div
@@ -16,7 +19,11 @@ export default function Hero() {
             <div className="container mx-auto px-4">
               <div className="mx-auto max-w-4xl text-center">
                 <span className="font-semibold uppercase tracking-widest text-gray-200">
-                  New feature
+                  Welcome{" "}
+                  <span className="font-bold text-accentSecondary">
+                    {user ? user.email?.split("@")[0] : "Guest"}
+                  </span>{" "}
+                  to the
                 </span>
                 <h2 className="mb-6 mt-8 text-4xl font-bold text-gray-100 lg:text-5xl">
                   UC Berkeley AMP Manager Toolkit
