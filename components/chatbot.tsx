@@ -78,7 +78,7 @@ const Chatbot: React.FC = () => {
       try {
         // Make an API call to your backend
         const response = await fetch(
-          "http://amp-chatbot-env.eba-xguiwxcb.us-west-2.elasticbeanstalk.com/query",
+          "https://amp-chatbot-env.eba-xguiwxcb.us-west-2.elasticbeanstalk.com/query",
           {
             method: "POST",
             headers: {

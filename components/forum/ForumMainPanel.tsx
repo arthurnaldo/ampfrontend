@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase";
 import CommentButton from "@/components/forum/CommentComponents/CommentButton";
 import CommentBox from "./CommentComponents/CommentBox";
 import CommentList from "./CommentComponents/CommentList";
+import { useAuth } from "@/app/context/AuthContext";
 
 interface ForumMainPanelProps {
   selectedPost: Post | null;
@@ -17,6 +18,7 @@ export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [commentCount, setCommentCount] = useState(0);
   const [refreshComments, setRefreshComments] = useState(0);
+  const { user } = useAuth();
 
   useEffect(() => {
     console.log("Updated selectedPost:", selectedPost);
@@ -95,7 +97,7 @@ export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
             onSubmitComment={handleSubmitComment}
             onCancel={() => setShowCommentBox(false)}
             postId={selectedPost.id}
-            userId={"dffcbd9a-d8d5-4c38-a53c-0b2b0e2f36bd"}
+            userId={user?.id}
           />
         )}
         <CommentList postId={selectedPost.id} refresh={refreshComments} />

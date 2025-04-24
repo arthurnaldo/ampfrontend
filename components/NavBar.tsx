@@ -79,7 +79,7 @@ export default function NavBar() {
               <NavBarLink selected={pathname === "/contact"} text="Contact" />
             </Link>
             <Link href="/login">
-              <NavBarLink selected={pathname === "/login"} text="Login Test" />
+              <NavBarLink selected={pathname === "/login"} text="Login" />
             </Link>
           </div>
         </div>

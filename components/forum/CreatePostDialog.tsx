@@ -18,6 +18,7 @@ export default function CreatePostDialog({
 }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [open, setOpen] = useState(false);
 
   const handlePost = async () => {
     if (!title.trim() || !content.trim()) return;
@@ -36,12 +37,13 @@ export default function CreatePostDialog({
     addPost(newPost); // Call parent function to add the post
     setTitle("");
     setContent("");
+    setOpen(false); // Close the dialog after posting
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button onClick={handlePost}>Create Post</Button>
+        <Button>Create Post</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
@@ -49,9 +51,11 @@ export default function CreatePostDialog({
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Input placeholder="Title" 
-                   value={title}
-                   onChange = {(e) => setTitle(e.target.value)}/>
+            <Input
+              placeholder="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </div>
           <div className="grid gap-2">
             <Textarea
@@ -63,7 +67,9 @@ export default function CreatePostDialog({
           </div>
         </div>
         <div className="flex justify-end gap-2">
-          <Button variant="outline">Cancel</Button>
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Cancel
+          </Button>
           <Button onClick={handlePost}>Post</Button>
         </div>
       </DialogContent>

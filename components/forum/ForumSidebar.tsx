@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { Search } from "lucide-react";
 import CreatePostDialog from "./CreatePostDialog";
+import { useAuth } from "@/app/context/AuthContext";
 
 interface Post {
   id: string;
@@ -25,6 +26,7 @@ export default function ForumSidebar({
   selectedPostId,
 }: ForumSidebarProps) {
   const [posts, setPosts] = useState<Post[]>([]);
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchPosts();
@@ -63,13 +65,18 @@ export default function ForumSidebar({
   };
 
   const addPost = async (newPost: Post) => {
+    if (!user) {
+      console.error("User not authenticated");
+      return;
+    }
+
     const { data, error } = await supabase
       .from("posts")
       .insert([
         {
           title: newPost.title,
           content: newPost.content,
-          author: "4ff3c884-6fd9-4c81-87ba-4b73e57f0264",
+          author: user.id,
         },
       ])
       .select("*");
