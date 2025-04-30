@@ -57,26 +57,20 @@ export default function NavBar() {
             <Link href="/forum">
               <NavBarLink selected={pathname === "/forum"} text="Forum" />
             </Link>
-            <Link href="/community">
-              <NavBarLink
-                selected={pathname === "/community"}
-                text="Community"
-              />
-            </Link>
-            <Link href="/leadership">
-              <NavBarLink
-                selected={pathname === "/leadership"}
-                text="Leadership"
-              />
-            </Link>
             <Link href="/resources">
               <NavBarLink
                 selected={pathname === "/resources"}
                 text="Resources"
               />
             </Link>
-            <Link href="/contact">
-              <NavBarLink selected={pathname === "/contact"} text="Contact" />
+            <Link href="/community">
+              <NavBarLink
+                selected={pathname === "/community"}
+                text="Community"
+              />
+            </Link>
+            <Link href="/about">
+              <NavBarLink selected={pathname === "/about"} text="About" />
             </Link>
             <Link href="/login">
               <NavBarLink selected={pathname === "/login"} text="Login" />
