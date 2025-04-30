@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, ThumbsUp } from "lucide-react";
+import { ThumbsUp } from "lucide-react";
 import { Post } from "@/types/forum";
 import CommentButton from "@/components/forum/CommentComponents/CommentButton";
 import CommentBox from "./CommentComponents/CommentBox";
@@ -81,12 +81,13 @@ export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
           <Button variant="outline" size="sm">
             <ThumbsUp className="mr-2 h-4 w-4" />0 Likes
           </Button>
-          <Button variant="outline" size="sm">
-            <MessageSquare className="mr-2 h-4 w-4" />
-            {commentCount} Comments
-          </Button>
 
-          {!showCommentBox && <CommentButton onClick={handleCommentClick} />}
+          {!showCommentBox && (
+            <CommentButton
+              onClick={handleCommentClick}
+              commentCount={commentCount}
+            />
+          )}
         </div>
 
         {showCommentBox && (
