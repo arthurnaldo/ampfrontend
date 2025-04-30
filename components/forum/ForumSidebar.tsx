@@ -7,6 +7,7 @@ import CreatePostDialog from "./CreatePostDialog";
 import { useAuth } from "@/app/context/AuthContext";
 import { usePosts } from "@/app/hooks/use-posts";
 import { Post } from "@/types/forum";
+import { PostService } from "@/app/services/post-service";
 
 interface ForumSidebarProps {
   onPostSelect: (post: Post) => void;
@@ -38,6 +39,23 @@ export default function ForumSidebar({
     });
   };
 
+  const handlePostSelect = async (post: Post) => {
+    try {
+      // Fetch the latest post data to ensure we have the most up-to-date upvotes
+      const updatedPost = await PostService.getPostById(post.id);
+      if (updatedPost) {
+        onPostSelect(updatedPost);
+      } else {
+        // If we can't get the updated post, use the one we have
+        onPostSelect(post);
+      }
+    } catch (error) {
+      console.error("Error fetching updated post:", error);
+      // Fallback to using the existing post data
+      onPostSelect(post);
+    }
+  };
+
   const filteredPosts = posts.filter((post) =>
     post.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
@@ -67,7 +85,7 @@ export default function ForumSidebar({
                 {...post}
                 isActive={post.id === selectedPostId}
                 onClick={() => {
-                  onPostSelect(post);
+                  handlePostSelect(post);
                 }}
               />
             ))}

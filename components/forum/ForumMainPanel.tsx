@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { ThumbsUp } from "lucide-react";
 import { Post } from "@/types/forum";
 import CommentButton from "@/components/forum/CommentComponents/CommentButton";
 import CommentBox from "./CommentComponents/CommentBox";
@@ -10,6 +8,8 @@ import CommentList from "./CommentComponents/CommentList";
 import { useAuth } from "@/app/context/AuthContext";
 import { useComments } from "@/app/hooks/use-comments";
 import { useUsers } from "@/app/hooks/use-users";
+import VoteButtons from "./VoteButtons";
+import { usePosts } from "@/app/hooks/use-posts";
 
 interface ForumMainPanelProps {
   selectedPost: Post | null;
@@ -23,6 +23,7 @@ export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
     selectedPost?.id || "",
   );
   const { users, getUser } = useUsers();
+  const { votePost } = usePosts();
 
   // Fetch comment count when post changes
   if (selectedPost) {
@@ -77,10 +78,16 @@ export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
       </CardHeader>
       <CardContent>
         <p className="text-sm">{selectedPost.content}</p>
-        <div className="mt-6 flex gap-4">
-          <Button variant="outline" size="sm">
-            <ThumbsUp className="mr-2 h-4 w-4" />0 Likes
-          </Button>
+        <div className="mt-6 flex items-center gap-4">
+          {/* Horizontal layout for vote buttons */}
+          <div className="flex items-center">
+            <VoteButtons
+              postId={selectedPost.id}
+              initialUpvotes={selectedPost.upvotes || 0}
+              onVote={votePost}
+              horizontal={true}
+            />
+          </div>
 
           {!showCommentBox && (
             <CommentButton

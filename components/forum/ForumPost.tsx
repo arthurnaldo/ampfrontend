@@ -5,10 +5,12 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowUpIcon, ArrowDownIcon, MessageSquareIcon } from "lucide-react";
+import { MessageSquareIcon } from "lucide-react";
+import VoteButtons from "./VoteButtons";
+import { usePosts } from "@/app/hooks/use-posts";
 
 interface ForumPostProps {
-  id?: string;
+  id: string;
   title: string;
   author: string;
   created_at: string;
@@ -18,6 +20,7 @@ interface ForumPostProps {
 }
 
 export default function ForumPost({
+  id,
   title,
   author,
   created_at,
@@ -25,18 +28,16 @@ export default function ForumPost({
   upvotes,
   comments,
 }: ForumPostProps) {
+  const { votePost } = usePosts();
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-start gap-4">
-        <div className="flex flex-col items-center">
-          <Button variant="ghost" size="sm">
-            <ArrowUpIcon className="h-5 w-5" />
-          </Button>
-          <span className="text-sm font-bold">{upvotes}</span>
-          <Button variant="ghost" size="sm">
-            <ArrowDownIcon className="h-5 w-5" />
-          </Button>
-        </div>
+        <VoteButtons
+          postId={id}
+          initialUpvotes={upvotes || 0}
+          onVote={votePost}
+        />
         <div>
           <h3 className="text-lg font-semibold">{title}</h3>
           <p className="text-sm text-muted-foreground">

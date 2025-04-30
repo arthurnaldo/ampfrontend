@@ -41,11 +41,46 @@ export function usePosts() {
     [],
   );
 
+  const votePost = useCallback(
+    async (postId: string, voteType: "upvote" | "downvote") => {
+      try {
+        const success = await PostService.votePost(postId, voteType);
+
+        if (success) {
+          // Update the local state to reflect the vote
+          setPosts((prevPosts) =>
+            prevPosts.map((post) => {
+              if (post.id === postId) {
+                const currentUpvotes = post.upvotes || 0;
+                return {
+                  ...post,
+                  upvotes:
+                    voteType === "upvote"
+                      ? currentUpvotes + 1
+                      : Math.max(0, currentUpvotes - 1),
+                };
+              }
+              return post;
+            }),
+          );
+        }
+
+        return success;
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(String(err));
+        setError(error);
+        return false;
+      }
+    },
+    [],
+  );
+
   return {
     posts,
     loading,
     error,
     fetchPosts,
     addPost,
+    votePost,
   };
 }
