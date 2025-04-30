@@ -1,20 +1,12 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { Search } from "lucide-react";
 import CreatePostDialog from "./CreatePostDialog";
 import { useAuth } from "@/app/context/AuthContext";
-
-interface Post {
-  id: string;
-  title: string;
-  author: string;
-  created_at: string;
-  content?: string;
-  isActive?: boolean;
-}
+import { usePosts } from "@/app/hooks/use-posts";
+import { Post } from "@/types/forum";
 
 interface ForumSidebarProps {
   onPostSelect: (post: Post) => void;
@@ -25,91 +17,62 @@ export default function ForumSidebar({
   onPostSelect,
   selectedPostId,
 }: ForumSidebarProps) {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const { posts, loading, fetchPosts, addPost } = usePosts();
   const { user } = useAuth();
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [fetchPosts]);
 
-  const fetchPosts = async () => {
-    const { data, error } = await supabase
-      .from("posts")
-      .select("id, title, author, content, created_at") // Fetch necessary fields
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching posts:", error);
-    } else {
-      console.log(data);
-      // Format the timestamp into a readable format
-      const formattedPosts = data.map(
-        (post: {
-          id: string;
-          title: string;
-          author: string;
-          content: string;
-          created_at: string;
-        }) => ({
-          id: post.id,
-          title: post.title,
-          author: post.author, // Assuming this is a username, otherwise fetch user separately
-          content: post.content,
-          created_at: new Date(post.created_at).toLocaleString(),
-        }),
-      );
-      console.log("Formatted posts:", formattedPosts);
-
-      setPosts(formattedPosts);
-    }
-  };
-
-  const addPost = async (newPost: Post) => {
+  const handleAddPost = async (newPost: Post) => {
     if (!user) {
       console.error("User not authenticated");
       return;
     }
 
-    const { data, error } = await supabase
-      .from("posts")
-      .insert([
-        {
-          title: newPost.title,
-          content: newPost.content,
-          author: user.id,
-        },
-      ])
-      .select("*");
-
-    if (error) {
-      console.error("Error adding post:", error);
-    } else if (data) {
-      setPosts([data[0], ...posts]);
-    }
+    await addPost({
+      title: newPost.title,
+      content: newPost.content || "",
+      author: user.id,
+    });
   };
+
+  const filteredPosts = posts.filter((post) =>
+    post.title.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   return (
     <div className="flex h-full flex-col gap-4 p-4">
-      <CreatePostDialog addPost={addPost} />
+      <CreatePostDialog addPost={handleAddPost} />
 
       <div className="relative">
         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input className="pl-8" placeholder="Search discussions..." />
+        <Input
+          className="pl-8"
+          placeholder="Search discussions..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="space-y-2">
-          {posts.map((post) => (
-            <PostListItem
-              key={post.id}
-              {...post}
-              isActive={post.id === selectedPostId}
-              onClick={() => {
-                onPostSelect(post);
-              }}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <p className="text-center text-muted-foreground">Loading posts...</p>
+        ) : (
+          <div className="space-y-2">
+            {filteredPosts.map((post) => (
+              <PostListItem
+                key={post.id}
+                {...post}
+                isActive={post.id === selectedPostId}
+                onClick={() => {
+                  onPostSelect(post);
+                }}
+              />
+            ))}
+          </div>
+        )}
       </ScrollArea>
     </div>
   );
@@ -137,7 +100,6 @@ function PostListItem({
     >
       <h3 className="line-clamp-2 text-sm font-medium">{title}</h3>
       <p className="mt-1 text-xs text-muted-foreground">{author}</p>
-
       <p className="mt-1 text-xs text-muted-foreground">{created_at}</p>
     </Card>
   );

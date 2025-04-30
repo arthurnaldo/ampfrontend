@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Send, Loader2 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { useComments } from "@/app/hooks/use-comments";
 
 interface CommentBoxProps {
   onSubmitComment: (text: string) => void;
@@ -16,40 +16,29 @@ export default function CommentBox({
   postId,
   userId,
 }: CommentBoxProps) {
-  console.log("CommentBox rendered with:", {
-    onSubmitComment,
-    onCancel,
-    postId,
-    userId,
-  });
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { addComment } = useComments(postId || "");
 
   const handleSubmit = async () => {
-    if (!comment.trim() || isSubmitting) return;
+    if (!comment.trim() || isSubmitting || !postId || !userId) return;
 
     setIsSubmitting(true);
 
     try {
-      if (postId && userId) {
-        const { data, error } = await supabase.from("comments").insert([
-          {
-            post_id: postId,
-            user_id: userId,
-            content: comment,
-            parent_id: null,
-            rating: 0,
-          },
-        ]);
+      const result = await addComment({
+        post_id: postId,
+        user_id: userId,
+        content: comment,
+        parent_id: null,
+      });
 
-        if (error) {
-          throw error;
-        }
-        console.log("Comment saved to database: ", data);
+      if (result) {
+        onSubmitComment(comment);
+        setComment("");
+      } else {
+        throw new Error("Failed to save comment");
       }
-
-      onSubmitComment(comment);
-      setComment("");
     } catch (error) {
       console.error("Error saving comment:", error);
       alert("Failed to save comment. Please try again.");
@@ -73,11 +62,8 @@ export default function CommentBox({
         </Button>
         <Button
           size="sm"
-          onClick={() => {
-            console.log("Button raw click");
-            handleSubmit();
-          }}
-          disabled={!comment.trim()}
+          onClick={handleSubmit}
+          disabled={!comment.trim() || isSubmitting}
         >
           {isSubmitting ? (
             <>

@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, ThumbsUp } from "lucide-react";
 import { Post } from "@/types/forum";
-import { supabase } from "@/lib/supabase";
 import CommentButton from "@/components/forum/CommentComponents/CommentButton";
 import CommentBox from "./CommentComponents/CommentBox";
 import CommentList from "./CommentComponents/CommentList";
 import { useAuth } from "@/app/context/AuthContext";
+import { useComments } from "@/app/hooks/use-comments";
+import { useUsers } from "@/app/hooks/use-users";
 
 interface ForumMainPanelProps {
   selectedPost: Post | null;
@@ -16,45 +17,35 @@ interface ForumMainPanelProps {
 
 export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
   const [showCommentBox, setShowCommentBox] = useState(false);
-  const [commentCount, setCommentCount] = useState(0);
   const [refreshComments, setRefreshComments] = useState(0);
   const { user } = useAuth();
+  const { commentCount, fetchCommentCount } = useComments(
+    selectedPost?.id || "",
+  );
+  const { users, getUser } = useUsers();
 
-  useEffect(() => {
-    console.log("Updated selectedPost:", selectedPost);
-    console.log("This is a test");
+  // Fetch comment count when post changes
+  if (selectedPost) {
+    fetchCommentCount();
+  }
 
-    if (selectedPost) {
-      fetchCommentCount();
-    }
-  }, [selectedPost, refreshComments]);
+  // Fetch author details if needed
+  if (
+    selectedPost &&
+    typeof selectedPost.author === "string" &&
+    !users[selectedPost.author]
+  ) {
+    getUser(selectedPost.author);
+  }
 
   const handleCommentClick = () => {
-    console.log("Comment button clicked");
     setShowCommentBox(true);
   };
 
-  const handleSubmitComment = (text: string) => {
-    console.log("Comment submitted: ", text);
+  const handleSubmitComment = () => {
     setShowCommentBox(false);
-    //When a comment is submitted, this will automatically update the comment count
+    // When a comment is submitted, this will automatically update the comment count
     setRefreshComments((prev) => prev + 1);
-  };
-
-  //I created this to fetch the amount of comments for the selected post
-  const fetchCommentCount = async () => {
-    if (!selectedPost) return;
-
-    try {
-      const { count, error } = await supabase
-        .from("comments")
-        .select("*", { count: "exact" })
-        .eq("post_id", selectedPost.id);
-      if (error) throw error;
-      setCommentCount(count || 0);
-    } catch (error) {
-      console.error("Error fetching comment count: ", error);
-    }
   };
 
   if (!selectedPost) {
@@ -65,6 +56,12 @@ export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
     );
   }
 
+  // Get author name
+  const authorName =
+    typeof selectedPost.author === "string" && users[selectedPost.author]
+      ? users[selectedPost.author].username
+      : "Unknown Author";
+
   return (
     <Card className="m-4">
       <CardHeader className="flex flex-row items-start gap-4 space-y-0">
@@ -74,7 +71,7 @@ export default function ForumMainPanel({ selectedPost }: ForumMainPanelProps) {
         <div className="flex-1">
           <h2 className="text-xl font-bold">{selectedPost.title}</h2>
           <p className="text-sm text-muted-foreground">
-            Posted at {new Date(selectedPost.created_at).toLocaleString()}
+            Posted by {authorName} at {selectedPost.created_at}
           </p>
         </div>
       </CardHeader>
