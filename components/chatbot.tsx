@@ -77,24 +77,30 @@ const Chatbot: React.FC = () => {
 
       try {
         // Make an API call to your backend
-        const response = await fetch(
-          "https://amp-chatbot-env.eba-xguiwxcb.us-west-2.elasticbeanstalk.com/query",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ query: userMessageContent }),
+        const response = await fetch("https://ampchatbot-api.xyz/query", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+          body: JSON.stringify({ query: userMessageContent }),
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const data = await response.json();
-        // Access the result from the response
-        const botResponse: string = data.response;
+        // Extract the response content properly
+        let botResponse: string;
+
+        if (typeof data.response === "object") {
+          // If response is an object, extract the result field or stringify it
+          botResponse = data.response.result || JSON.stringify(data.response);
+        } else {
+          // If it's already a string, use it directly
+          botResponse = data.response;
+        }
+
         console.log(botResponse);
 
         const botMessage: Message = { type: "bot", content: botResponse };
