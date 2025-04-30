@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Send, Loader2 } from "lucide-react";
 import { useComments } from "@/app/hooks/use-comments";
+import { useAuth } from "@/app/context/AuthContext";
 
 interface CommentBoxProps {
   onSubmitComment: (text: string) => void;
@@ -18,12 +19,20 @@ export default function CommentBox({
 }: CommentBoxProps) {
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const { addComment } = useComments(postId || "");
+  const { user } = useAuth();
 
   const handleSubmit = async () => {
+    if (!user) {
+      setError("Login to comment");
+      return;
+    }
+
     if (!comment.trim() || isSubmitting || !postId || !userId) return;
 
     setIsSubmitting(true);
+    setError("");
 
     try {
       const result = await addComment({
@@ -56,6 +65,7 @@ export default function CommentBox({
         value={comment}
         onChange={(e) => setComment(e.target.value)}
       />
+      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
       <div className="mt-2 flex justify-end">
         <Button size="sm" className="mr-2" variant="outline" onClick={onCancel}>
           Cancel

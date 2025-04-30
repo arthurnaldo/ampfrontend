@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Post } from "@/types/forum";
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function CreatePostDialog({
   addPost,
@@ -19,15 +20,22 @@ export default function CreatePostDialog({
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState("");
+  const { user } = useAuth();
 
   const handlePost = async () => {
+    if (!user) {
+      setError("Login to post");
+      return;
+    }
+
     if (!title.trim() || !content.trim()) return;
 
     // Create a new post object
     const newPost = {
       id: Math.random().toString(36).substr(2, 9),
       title,
-      author: "4ff3c884-6fd9-4c81-87ba-4b73e57f0264", // Replace with actual user data if available
+      author: user.id,
       created_at: new Date().toLocaleString(),
       content,
       upvotes: 0,
@@ -65,6 +73,7 @@ export default function CreatePostDialog({
               onChange={(e) => setContent(e.target.value)}
             />
           </div>
+          {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => setOpen(false)}>
